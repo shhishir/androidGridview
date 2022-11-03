@@ -1,5 +1,6 @@
 package com.example.spacex
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log.d
@@ -44,16 +45,27 @@ class MainActivity : AppCompatActivity() {
             override fun onResponse(call: Call<List<SpaceXDataItem>?>,
                                     response: Response<List<SpaceXDataItem>?>) {
                 val resBody = response.body()!!
-
                 spaceItemAdapter = RecycleViewAdapter(baseContext, resBody)
                 spaceItemAdapter.notifyDataSetChanged()
                 spaceRecycleView.adapter = spaceItemAdapter
 
+                spaceItemAdapter.onItemClick = {
+                    val intent = Intent(this@MainActivity, DetailsActivity::class.java)
+
+                    intent.putExtra("title",it.name)
+                    intent.putExtra("flightNum", it.rocket)
+                    intent.putExtra("link", it.links.article)
+                    intent.putExtra("dateOF", it.date_utc)
+                    intent.putExtra("desc", it.details)
+                    startActivity(intent)
+                }
             }
 
             override fun onFailure(call: Call<List<SpaceXDataItem>?>, t: Throwable) {
                d("MainActivity","onFailure" + t.message )
             }
         })
+
+
     }
 }

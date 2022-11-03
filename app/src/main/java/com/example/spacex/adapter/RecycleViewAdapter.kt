@@ -1,5 +1,6 @@
 package com.example.spacex.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,8 @@ import kotlinx.android.synthetic.main.grid_view_item.view.*
 
 class RecycleViewAdapter(val context:Context, val spaceDataList: List<SpaceXDataItem>):
     RecyclerView.Adapter<RecycleViewAdapter.ViewHolder>() {
+
+    var onItemClick:((SpaceXDataItem) -> Unit)? = null
 
     class ViewHolder(itemView:View):RecyclerView.ViewHolder(itemView) {
         var img : ImageView
@@ -31,10 +34,15 @@ class RecycleViewAdapter(val context:Context, val spaceDataList: List<SpaceXData
         return ViewHolder(items)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, @SuppressLint("RecyclerView") position: Int) {
         holder.name.text = spaceDataList[position].name
         holder.date.text = spaceDataList[position].date_utc
         Glide.with(context).load(spaceDataList[position].links.patch.small).into(holder.img)
+
+        holder.itemView.setOnClickListener{
+            onItemClick?.invoke(spaceDataList[position])
+
+        }
     }
 
     override fun getItemCount(): Int {
